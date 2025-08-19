@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hostel Menu & AI Chatbot</title>
+    <title>SRM Hostel Chatbot</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -20,33 +20,94 @@
             overflow-y: auto;
             scroll-behavior: smooth;
         }
+
+        /* Custom scrollbar for a cleaner look */
+        .chat-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .chat-container::-webkit-scrollbar-track {
+            background: #e5e7eb;
+            border-radius: 10px;
+        }
+
+        .chat-container::-webkit-scrollbar-thumb {
+            background-color: #4054B2;
+            border-radius: 10px;
+            border: 2px solid #e5e7eb;
+        }
+
+        /* Custom styles for chat messages */
+        .message-user {
+            background-color: #4054B2;
+            color: white;
+            border-bottom-right-radius: 0;
+        }
+
+        .message-bot {
+            background-color: #e5e7eb;
+            color: #1f2937;
+            border-bottom-left-radius: 0;
+        }
+
+        .srm-blue {
+            background-color: #0C477F;
+        }
+
+        .text-srm-blue {
+            color: #0C477F;
+        }
+        
+        .border-srm-blue {
+            border-color: #0C477F;
+        }
+
+        .ring-srm-blue {
+            --tw-ring-color: #0C477F;
+        }
+
+        /* New class for the light header */
+        .header-light-bg {
+            background-color: #f3f4f6;
+            color: #1f2937; /* Dark text for contrast */
+        }
     </style>
 </head>
 
-<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
+<body class="bg-[#122A4E] flex items-center justify-center min-h-screen p-4 relative">
 
-    <div class="bg-white rounded-2xl shadow-xl w-full max-w-lg overflow-hidden flex flex-col h-[80vh]">
+    <!-- Main chat card container, updated for theme and with a black border -->
+    <div class="bg-white rounded-2xl shadow-xl w-full max-w-lg overflow-hidden flex flex-col h-[80vh] border-2 border-black">
 
-        <div class="bg-indigo-600 p-4 text-white text-center rounded-t-2xl">
-            <h1 class="text-xl font-semibold">Hostel Menu & AI Chatbot</h1>
-            <p class="text-sm opacity-80">Ask me about the hostel mess menu</p>
+        <!-- Header section with a light background for visibility -->
+        <div class="header-light-bg p-4 rounded-t-2xl flex items-center space-x-4 border-b border-gray-200">
+            <!-- SRM Logo using the provided URL -->
+            <img src="https://www.wonderskool.com//uploads/1547464141_logo_(1).png" alt="SRM Institute of Science and Technology Logo" class="h-10 w-auto">
+            <div class="flex flex-col items-start">
+                <h1 class="text-xl font-semibold text-srm-blue">Hostel Menu Chatbot</h1>
+                <p class="text-xs opacity-80 text-gray-600">Tirupati Mess</p>
+                <p class="text-xs opacity-80 text-gray-600">SRM Institute of Science and Technology</p>
+            </div>
         </div>
-
+        
+        <!-- Chat box container -->
         <div id="chat-box" class="chat-container p-4 space-y-4 flex-1">
+            <!-- Initial message from the chatbot -->
             <div class="flex justify-start">
-                <div class="bg-gray-200 text-gray-800 p-3 rounded-xl rounded-bl-none max-w-[80%]">
-                    <p>Hello! I am a helpful assistant. You can ask me about the hostel mess menu </p>
+                <div class="p-3 rounded-xl rounded-bl-none max-w-[80%] message-bot">
+                    <p>Hello! I am an assistant for the hostel mess. You can ask me about today's menu or the full week's menu.</p>
                 </div>
             </div>
         </div>
 
+        <!-- Input area -->
         <div class="bg-gray-50 p-4 border-t border-gray-200 rounded-b-2xl">
             <div class="flex items-center space-x-2">
                 <input type="text" id="user-input"
-                    class="flex-1 p-3 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
+                    class="flex-1 p-3 rounded-full border border-gray-300 focus:outline-none focus:ring-2 ring-srm-blue transition-all"
                     placeholder="Type your message...">
                 <button id="send-btn"
-                    class="bg-indigo-600 text-white p-3 rounded-full hover:bg-indigo-700 transition-colors shadow-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    class="srm-blue text-white p-3 rounded-full hover:bg-blue-800 transition-colors shadow-md focus:outline-none focus:ring-2 ring-srm-blue">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5"
                         stroke="currentColor" class="w-6 h-6">
                         <path stroke-linecap="round" stroke-linejoin="round"
@@ -57,12 +118,43 @@
         </div>
 
     </div>
+    
+    <!-- Floating suggestion button -->
+    <button id="suggestion-btn" class="fixed bottom-8 right-8 bg-white p-4 rounded-full shadow-lg hover:shadow-xl transition-shadow focus:outline-none focus:ring-2 ring-srm-blue">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-srm-blue" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20z" />
+            <path d="M12 16v-4" />
+            <path d="M12 8h.01" />
+        </svg>
+    </button>
+
+    <!-- Suggestion box modal (initially hidden) -->
+    <div id="suggestion-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden">
+        <div class="bg-white rounded-2xl shadow-xl w-full max-w-sm p-6 relative">
+            <!-- Close button for the modal -->
+            <button id="close-modal-btn" class="absolute top-4 right-4 text-gray-500 hover:text-gray-800 transition-colors focus:outline-none">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M18 6L6 18M6 6l12 12" />
+                </svg>
+            </button>
+            <h3 class="text-xl font-bold text-srm-blue mb-4">Suggestions for the Mess</h3>
+            <textarea id="suggestion-box" class="w-full p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 ring-srm-blue transition-all resize-none" rows="5" placeholder="Enter your suggestions here..."></textarea>
+            <button id="submit-suggestion-btn" class="mt-4 w-full srm-blue text-white p-3 rounded-lg hover:bg-blue-800 transition-colors shadow-md focus:outline-none focus:ring-2 ring-srm-blue font-semibold">Submit Suggestion</button>
+        </div>
+    </div>
 
     <script>
-        (function () {
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- DOM Elements ---
             const chatBox = document.getElementById('chat-box');
             const userInput = document.getElementById('user-input');
             const sendBtn = document.getElementById('send-btn');
+            const suggestionBtn = document.getElementById('suggestion-btn');
+            const suggestionModal = document.getElementById('suggestion-modal');
+            const suggestionBox = document.getElementById('suggestion-box');
+            const submitSuggestionBtn = document.getElementById('submit-suggestion-btn');
+            const closeModalBtn = document.getElementById('close-modal-btn');
+
 
             // --- MENU DATA ---
             const menuData = {
@@ -117,9 +209,7 @@
                 const messageContent = document.createElement('div');
                 messageContent.classList.add(
                     'p-3', 'rounded-xl', 'max-w-[80%]',
-                    sender === 'user' ? 'bg-indigo-500' : 'bg-gray-200',
-                    sender === 'user' ? 'text-white' : 'text-gray-800',
-                    sender === 'user' ? 'rounded-br-none' : 'rounded-bl-none'
+                    sender === 'user' ? 'message-user' : 'message-bot'
                 );
                 messageContent.innerHTML = message;
                 messageDiv.appendChild(messageContent);
@@ -143,7 +233,6 @@
                 const prompt = userPrompt.toLowerCase();
                 const greetings = ["hello", "hi", "hey"];
                 
-                // If the user's prompt is a simple greeting, return the initial greeting.
                 if (greetings.includes(prompt)) {
                     return "Hello there! How can I help you with the hostel menu?";
                 }
@@ -211,38 +300,6 @@
                 return "I can only provide information about the hostel mess menu. Here is the full menu for your reference:<br/><br/>" + fullMenu;
             }
 
-            // --- AI RESPONSE FROM BACKEND ---
-            // IMPORTANT: This URL is configured for local testing.
-            const backendApiUrl = 'http://localhost:3000/chat';
-
-            async function getGeminiResponse(userPrompt) {
-                for (let i = 0; i < 5; i++) {
-                    try {
-                        const response = await fetch(backendApiUrl, {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ prompt: userPrompt, menuData: menuData })
-                        });
-
-                        if (!response.ok) {
-                            if (response.status === 429) {
-                                await new Promise(resolve => setTimeout(resolve, Math.pow(2, i) * 1000));
-                                continue;
-                            }
-                            console.error('Backend API call failed with status:', response.status);
-                            throw new Error(`Backend API call failed with status: ${response.status}`);
-                        }
-
-                        const result = await response.json();
-                        return result.text;
-                    } catch (error) {
-                        console.error('Error fetching from backend:', error);
-                    }
-                }
-                return "I'm sorry, I'm having trouble retrieving the information right now. Please try again later.";
-            }
-
-            // --- EVENT HANDLERS ---
             async function sendMessage() {
                 try {
                     const userMessage = userInput.value.trim();
@@ -253,30 +310,47 @@
                     addMessage('user', userMessage);
                     userInput.value = '';
 
-                    const localResponse = getLocalResponse(userMessage);
-                    if (localResponse) {
-                        addMessage('bot', localResponse);
-                        return;
-                    }
-
-                    setLoading(true);
-                    const botResponse = await getGeminiResponse(userMessage);
-                    setLoading(false);
+                    const botResponse = getLocalResponse(userMessage);
                     addMessage('bot', botResponse);
                 } catch (error) {
                     console.error('An unexpected error occurred:', error);
-                    setLoading(false);
                     addMessage('bot', "I'm sorry, an unexpected error occurred. Please try again later.");
                 }
             }
+            
+            async function submitSuggestion() {
+                const suggestionText = suggestionBox.value.trim();
+                if (suggestionText === '') {
+                    return;
+                }
+                
+                // For now, we'll log the suggestion to the console.
+                console.log("New suggestion submitted:", suggestionText);
+                addMessage('bot', "Thank you for your suggestion! It has been submitted.");
 
+                // Clear the suggestion box and close the modal after submission
+                suggestionBox.value = '';
+                suggestionModal.classList.add('hidden');
+            }
+
+            // --- EVENT LISTENERS ---
             sendBtn.addEventListener('click', sendMessage);
             userInput.addEventListener('keydown', (event) => {
                 if (event.key === 'Enter') {
                     sendMessage();
                 }
             });
-        })();
+
+            suggestionBtn.addEventListener('click', () => {
+                suggestionModal.classList.remove('hidden');
+            });
+
+            closeModalBtn.addEventListener('click', () => {
+                suggestionModal.classList.add('hidden');
+            });
+
+            submitSuggestionBtn.addEventListener('click', submitSuggestion);
+        });
     </script>
 </body>
 

@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hostel Menu & AI Chatbot</title>
+    <!-- Use the Inter font from Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Load Tailwind CSS from CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+
+        .chat-container {
+            height: 70vh;
+            overflow-y: auto;
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
+
+    <!-- Main application container -->
+    <div class="bg-white rounded-2xl shadow-xl w-full max-w-lg overflow-hidden flex flex-col h-[80vh]">
+
+        <!-- Header -->
+        <div class="bg-indigo-600 p-4 text-white text-center rounded-t-2xl">
+            <h1 class="text-xl font-semibold">Hostel Menu & AI Chatbot</h1>
+            <p class="text-sm opacity-80">Ask me about the menu or anything else!</p>
+        </div>
+
+        <!-- Chat messages container -->
+        <div id="chat-box" class="chat-container p-4 space-y-4 flex-1">
+            <!-- Initial welcome message from the bot -->
+            <div class="flex justify-start">
+                <div class="bg-gray-200 text-gray-800 p-3 rounded-xl rounded-bl-none max-w-[80%]">
+                    <p>Hello! I am a helpful assistant. You can ask me about the hostel menu or anything else you'd like to know.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Message input area -->
+        <div class="bg-gray-50 p-4 border-t border-gray-200 rounded-b-2xl">
+            <div class="flex items-center space-x-2">
+                <input type="text" id="user-input"
+                    class="flex-1 p-3 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
+                    placeholder="Type your message...">
+                <button id="send-btn"
+                    class="bg-indigo-600 text-white p-3 rounded-full hover:bg-indigo-700 transition-colors shadow-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5"
+                        stroke="currentColor" class="w-6 h-6">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- JavaScript for chatbot logic -->
+    <script>
+        (function () {
+            const chatBox = document.getElementById('chat-box');
+            const userInput = document.getElementById('user-input');
+            const sendBtn = document.getElementById('send-btn');
+
+            // --- MENU DATA ---
+            const menuData = {
+                "Monday": {
+                    "Breakfast": "Idli with Sambar, Coconut Chutney, and Filter Coffee",
+                    "Lunch": "Roti, Dal Tadka, Aloo Gobi, Salad, and Buttermilk",
+                    "Snacks": "Samosa with Tea",
+                    "Dinner": "Chicken Curry, Plain Rice, and Kheer"
+                },
+                "Tuesday": {
+                    "Breakfast": "Aloo Paratha with Curd and Pickle, Tea",
+                    "Lunch": "Rajma Chawal, Papad, Onion Salad, and Lassi",
+                    "Snacks": "Vegetable Pakora with Mint Chutney",
+                    "Dinner": "Dosa with Sambar and Chutney"
+                },
+                "Wednesday": {
+                    "Breakfast": "Poha with Sev, Jalebi, and Tea",
+                    "Lunch": "Rice, Rasam, Sauteed Vegetables, and Curd Rice",
+                    "Snacks": "Aloo Tikki with Tamarind Sauce",
+                    "Dinner": "Vegetable Biryani with Raita"
+                },
+                "Thursday": {
+                    "Breakfast": "Omelette with Toast, Jam, and Milk",
+                    "Lunch": "Roti, Mixed Vegetable Curry, and Salad",
+                    "Snacks": "Bread Pakora with Ketchup",
+                    "Dinner": "Chhole Bhature with Green Chutney"
+                },
+                "Friday": {
+                    "Breakfast": "Puri with Bhaji and Coffee",
+                    "Lunch": "Khichdi with Curd, and Roasted Papad",
+                    "Snacks": "Maggi Noodles",
+                    "Dinner": "Fish Curry with Rice and Lemon"
+                },
+                "Saturday": {
+                    "Breakfast": "Upma with Groundnut Chutney and Tea",
+                    "Lunch": "Pav Bhaji with Onions",
+                    "Snacks": "Chole Samosa",
+                    "Dinner": "Paneer Butter Masala with Naan"
+                },
+                "Sunday": {
+                    "Breakfast": "Chole Bhature and Lassi",
+                    "Lunch": "Vegetable Pulao, Dal Makhani, and Salad",
+                    "Snacks": "Veggie Sandwich with Chips",
+                    "Dinner": "Special Pizza and French Fries"
+                }
+            };
+
+            // --- UTILITY FUNCTIONS ---
+            function addMessage(sender, message) {
+                const messageDiv = document.createElement('div');
+                messageDiv.classList.add('flex', sender === 'user' ? 'justify-end' : 'justify-start');
+                const messageContent = document.createElement('div');
+                messageContent.classList.add(
+                    'p-3', 'rounded-xl', 'max-w-[80%]',
+                    sender === 'user' ? 'bg-indigo-500' : 'bg-gray-200',
+                    sender === 'user' ? 'text-white' : 'text-gray-800',
+                    sender === 'user' ? 'rounded-br-none' : 'rounded-bl-none'
+                );
+                messageContent.innerHTML = message;
+                messageDiv.appendChild(messageContent);
+                chatBox.appendChild(messageDiv);
+                chatBox.scrollTop = chatBox.scrollHeight;
+            }
+
+            function setLoading(isLoading) {
+                if (isLoading) {
+                    addMessage('bot', `<span id="loading-dots" class="animate-pulse">...</span>`);
+                } else {
+                    const loadingDots = document.getElementById('loading-dots');
+                    if (loadingDots) {
+                        loadingDots.parentElement.parentElement.remove();
+                    }
+                }
+            }
+            
+            // --- LOCAL GREETING AND MENU LOOKUP ---
+            function getLocalResponse(userPrompt) {
+                const prompt = userPrompt.toLowerCase();
+                const greetings = ["hello", "hi", "hey"];
+                if (greetings.includes(prompt)) {
+                    return "Hello there! How can I help you with the hostel menu or anything else today?";
+                }
+
+                const days = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"];
+                const meals = {
+                    "breakfast": "Breakfast",
+                    "morning": "Breakfast",
+                    "lunch": "Lunch",
+                    "afternoon": "Lunch",
+                    "snacks": "Snacks",
+                    "evening": "Snacks",
+                    "dinner": "Dinner",
+                    "night": "Dinner"
+                };
+
+                const today = new Date().getDay();
+                const todayName = days[(today === 0) ? 6 : today - 1];
+
+                let dayFound = null;
+                let mealFound = null;
+
+                for (const day of days) {
+                    if (prompt.includes(day)) {
+                        dayFound = day.charAt(0).toUpperCase() + day.slice(1);
+                        break;
+                    }
+                }
+
+                if (prompt.includes("today")) {
+                    dayFound = todayName.charAt(0).toUpperCase() + todayName.slice(1);
+                } else if (prompt.includes("tomorrow")) {
+                    const tomorrowIndex = (today === 6) ? 0 : today;
+                    dayFound = days[tomorrowIndex].charAt(0).toUpperCase() + days[tomorrowIndex].slice(1);
+                } else if (prompt.includes("yesterday")) {
+                    const yesterdayIndex = (today === 0) ? 5 : ((today === 1) ? 6 : today - 2);
+                    dayFound = days[yesterdayIndex].charAt(0).toUpperCase() + days[yesterdayIndex].slice(1);
+                }
+
+                for (const mealKeyword in meals) {
+                    if (prompt.includes(mealKeyword)) {
+                        mealFound = meals[mealKeyword];
+                        break;
+                    }
+                }
+                
+                if (dayFound && mealFound) {
+                    const dish = menuData[dayFound][mealFound];
+                    if (dish) {
+                        return `The ${mealFound.toLowerCase()} menu for ${dayFound} is: ${dish}.`;
+                    }
+                } else if (dayFound) {
+                    const dayMenu = menuData[dayFound];
+                    if (dayMenu) {
+                        return `Here is the full menu for ${dayFound}:<br/>Breakfast: ${dayMenu.Breakfast}<br/>Lunch: ${dayMenu.Lunch}<br/>Snacks: ${dayMenu.Snacks}<br/>Dinner: ${dayMenu.Dinner}`;
+                    }
+                }
+
+                return null;
+            }
+
+            // --- AI RESPONSE FROM BACKEND ---
+            // IMPORTANT: Replace this placeholder URL with your deployed backend URL.
+            const backendApiUrl = 'YOUR_DEPLOYED_BACKEND_URL_HERE';
+
+            async function getGeminiResponse(userPrompt) {
+                for (let i = 0; i < 5; i++) {
+                    try {
+                        const response = await fetch(backendApiUrl, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ prompt: userPrompt, menuData: menuData })
+                        });
+
+                        if (!response.ok) {
+                            if (response.status === 429) {
+                                await new Promise(resolve => setTimeout(resolve, Math.pow(2, i) * 1000));
+                                continue;
+                            }
+                            console.error('Backend API call failed with status:', response.status);
+                            throw new Error(`Backend API call failed with status: ${response.status}`);
+                        }
+
+                        const result = await response.json();
+                        return result.text;
+                    } catch (error) {
+                        console.error('Error fetching from backend:', error);
+                    }
+                }
+                return "I'm sorry, I'm having trouble retrieving the information right now. Please try again later.";
+            }
+
+            // --- EVENT HANDLERS ---
+            async function sendMessage() {
+                try {
+                    const userMessage = userInput.value.trim();
+                    if (userMessage === '') {
+                        return;
+                    }
+
+                    addMessage('user', userMessage);
+                    userInput.value = '';
+
+                    const localResponse = getLocalResponse(userMessage);
+                    if (localResponse) {
+                        addMessage('bot', localResponse);
+                        return;
+                    }
+
+                    setLoading(true);
+                    const botResponse = await getGeminiResponse(userMessage);
+                    setLoading(false);
+                    addMessage('bot', botResponse);
+                } catch (error) {
+                    console.error('An unexpected error occurred:', error);
+                    setLoading(false);
+                    addMessage('bot', "I'm sorry, an unexpected error occurred. Please try again later.");
+                }
+            }
+
+            sendBtn.addEventListener('click', sendMessage);
+            userInput.addEventListener('keydown', (event) => {
+                if (event.key === 'Enter') {
+                    sendMessage();
+                }
+            });
+        })();
+    </script>
+</body>
+
+</html>

@@ -12,7 +12,7 @@ app.use(cors());
 app.use(express.json());
 
 // Set your API key securely from an environment variable
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY || "AIzaSyB7I-x8HF49c7cINNAd5Z7mn4vxSErRPF8";
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY || "YOUR_VALID_API_KEY_HERE";
 const GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent";
 
 // Define the chat endpoint

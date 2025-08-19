@@ -151,7 +151,7 @@
                 const prompt = userPrompt.toLowerCase();
                 const greetings = ["hello", "hi", "hey"];
                 if (greetings.includes(prompt)) {
-                    return "Hello there! How can I help you with the hostel menu or anything else today?";
+                    return "Hello there! How can I help you with the hostel menu ?";
                 }
 
                 const days = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"];
@@ -212,8 +212,8 @@
             }
 
             // --- AI RESPONSE FROM BACKEND ---
-            // IMPORTANT: Replace this placeholder URL with your deployed backend URL.
-            const backendApiUrl = 'YOUR_DEPLOYED_BACKEND_URL_HERE';
+            // IMPORTANT: This URL is configured for local testing.
+            const backendApiUrl = 'http://localhost:3000/chat';
 
             async function getGeminiResponse(userPrompt) {
                 for (let i = 0; i < 5; i++) {
